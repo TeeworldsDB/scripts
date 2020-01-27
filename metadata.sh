@@ -69,12 +69,33 @@ delete_cache
 
 declare -A file_images
 
+function check_line() {
+    local type="$1"
+    local value="$2"
+    local expected="$3"
+    local line_num="$4"
+    if [ "${value:0:1}" != "$expected" ]
+    then
+        echo "Error: got token '${value:0:1}' expected '$expected'."
+        echo "expected type: $type"
+        echo "$line_num: $value"
+        delete_cache
+        exit 1
+    fi
+}
+
 function add_image() {
     local path="$1"
     local author="$2"
     local notes="$3"
     local tags="$4"
     local old_sha1="$5"
+    local line_num="$6"
+    check_line "path" "$path" "-" "$line_num"
+    check_line "author" "$author" " " "$line_num"
+    check_line "notes" "$notes" " " "$line_num"
+    check_line "tags" "$tags" " " "$line_num"
+    check_line "sha1" "$old_sha1" " " "$line_num"
     old_sha1="$(echo "${old_sha1#*:}" | xargs)"
     path="${path:2}"
     author="$(echo "${author#*:}" | xargs)"
@@ -105,6 +126,7 @@ EOF
 }
 
 i=0
+line_num=0
 file_path=INVALID
 sha1=INVALID
 author=INVALID
@@ -113,6 +135,7 @@ tags=INVALID
 while IFS= read -r l
 do
     i=$((i+1))
+    line_num=$((line_num+1))
     if [ "$i" -eq 1 ]; then
         file_path="$l"
     elif [ "$i" -eq 2 ]; then
@@ -142,7 +165,7 @@ do
             wrn "WARNING delete image only exisiting in readme:"
             wrn "$file_path"
         else
-            add_image "$file_path" "$author" "$notes" "$tags" "$sha1"
+            add_image "$file_path" "$author" "$notes" "$tags" "$sha1" "$line_num"
         fi
     fi
 done < readme.txt
