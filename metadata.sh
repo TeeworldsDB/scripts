@@ -150,6 +150,7 @@ done < readme.txt
 if [ "$i" -ne 0 ]
 then
     echo "Error: invalid index $i != 0"
+    delete_cache
     exit 1
 fi
 
