@@ -43,8 +43,8 @@ function delete_cache() {
 
 if [ "$#" -ne "1" ]
 then
-    echo "usage: $(basename $0) <directory>"
-    echo "example: $(basename $0) cartoon"
+    echo "usage: $(basename "$0") <directory>"
+    echo "example: $(basename "$0") cartoon"
     exit 0
 fi
 
@@ -115,7 +115,7 @@ function add_image() {
     dbg " notes  = '$notes'"
     dbg " tags   = '$tags'"
     dbg " sha1   = '$old_sha1'"
-    read -d '' credit << EOF
+    read -rd '' credit << EOF
 - $path
     author:$author
     notes:$notes
@@ -190,11 +190,13 @@ do
         # file_images["$img"]="XXX" # empty element
     else
         dbg "'$img' is in not list"
-        echo "- $img" >> "$tmp_file"
-        echo "    author:" >> "$tmp_file"
-        echo "    notes:" >> "$tmp_file"
-        echo "    tags:" >> "$tmp_file"
-        echo "    sha1: $(sha1sum "$img" | cut -d ' ' -f1)" >> "$tmp_file"
+        {
+            echo "- $img"
+            echo "    author:"
+            echo "    notes:"
+            echo "    tags:"
+            echo "    sha1: $(sha1sum "$img" | cut -d ' ' -f1)"
+        } >> "$tmp_file"
     fi
 done
 
