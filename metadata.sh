@@ -159,6 +159,9 @@ do
         done < <(find . -type f \( \
             -name "*.jpg" -o \
             -name "*.svg" -o \
+            -name "*.xcf" -o \
+            -name "*.rules" -o \
+            -name "*.json" -o \
             -name "*.png" \) -print0)
         if [ "$found" -eq 0 ]
         then
@@ -180,6 +183,9 @@ fi
 find . -type f \( \
     -name "*.jpg" -o \
     -name "*.svg" -o \
+    -name "*.xcf" -o \
+    -name "*.rules" -o \
+    -name "*.json" -o \
     -name "*.png" \) -print0 | while IFS= read -r -d '' f
 do
     img=${f:2}
