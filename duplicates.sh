@@ -3,6 +3,12 @@
 META_FILE="${1:-readme.txt}"
 dupes=0
 
+if [ ! -f "$META_FILE" ]
+then
+    echo "Error: meta file not found '$META_FILE'"
+    exit 1
+fi
+
 for dupe_sha in $(grep sha1 "$META_FILE" | \
     awk '{ print $2}' | \
     sort | uniq -D | uniq)
