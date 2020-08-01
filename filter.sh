@@ -70,14 +70,22 @@ function is_dupe() {
     return 1
 }
 
+num_dupes=0
+num_unqiues=0
+
 for img in "$IN_DIR"/*.png
 do
     [[ -e "$img" ]] || break
 
     sha="$(sha1sum "$img" | cut -d ' ' -f1)"
-    if ! is_dupe "$sha"
+    if is_dupe "$sha"
     then
+        num_dupes="$((num_dupes + 1))"
+    else
         cp "$img" "$OUT_DIR" || exit 1
+        num_unqiues="$((num_unqiues + 1))"
     fi
 done
 
+echo "dupes: $num_dupes"
+echo "uniques: $num_unqiues"
