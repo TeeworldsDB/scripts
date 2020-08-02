@@ -18,5 +18,12 @@ do
     echo "+-------------------------------------------------+"
 done
 
-echo "total sha1sum duplicates: $dupes"
+if [ "$dupes" == "0" ]
+then
+    echo "no duplicates found"
+    exit 0
+else
+    echo "total sha1sum duplicates: $dupes"
+    exit 1
+fi
 
