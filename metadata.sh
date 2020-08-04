@@ -192,7 +192,7 @@ find . -type f \( \
     -name "*.png" \) -print0 | sort | while IFS= read -r -d '' f
 do
     img=${f:2}
-    if [[ -v 'file_images[$img]' ]]
+    if [[ ! -z "${file_images[$img]:-}" ]]
     then
         dbg "'$img' is in list"
         echo "${file_images[$img]}" >> "$tmp_file"
