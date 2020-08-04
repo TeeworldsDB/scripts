@@ -20,7 +20,13 @@ done
 
 if [ "$dupes" == "0" ]
 then
-    echo "no duplicates found"
+    echo "no sha1sum duplicates found"
+    echo ""
+    echo "it is a good idea to now test a bit more manually using imgdupe:"
+    echo "$(tput bold)"
+    echo "  pip install imgdupes"
+    echo "  imgdupes -r . dhash 0"
+    echo "$(tput sgr0)"
     exit 0
 else
     echo "total sha1sum duplicates: $dupes"
