@@ -64,7 +64,7 @@ function check_dir() {
         if [ "$meta_resolution" == "1024 x 1024" ]
         then
             good_res="$((good_res + 1))"
-        elif [ "$meta_resolution" == "1024 x 1024" ]
+        elif [ "$meta_resolution" == "512 x 512" ]
         then
             warning_res="$((warning_res + 1))"
             w=1
