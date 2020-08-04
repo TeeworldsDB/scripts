@@ -6,6 +6,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
 
 good_res=0
+okay_res=0
 warning_res=0
 error_res=0
 
@@ -34,7 +35,8 @@ fi
 function check_dir() {
     local dir=$1
     local arg=$2
-    local w=0, e=0
+    local w=0 e=0
+    local width=0 height=0
     echo -n "[*] checking directory '$dir' ($arg) ... "
     if [ ! -d "$dir" ]
     then
@@ -66,12 +68,20 @@ function check_dir() {
             good_res="$((good_res + 1))"
         elif [ "$meta_resolution" == "512 x 512" ]
         then
-            warning_res="$((warning_res + 1))"
+            okay_res="$((okay_res + 1))"
             w=1
         else
-            error_res="$((error_res + 1))"
-            error_files+="${RED}$meta_resolution${RESET} $img\\n"
-            e=1
+            width="$(echo "$meta_resolution" | awk '{print $1}')"
+            height="$(echo "$meta_resolution" | awk '{print $3}')"
+
+            if [ "$width" -lt "512" ] || [ "$width" != "$height" ]
+            then
+                error_res="$((error_res + 1))"
+                error_files+="${RED}$meta_resolution${RESET} $img\\n"
+                e=1
+            else
+                warning_res="$((warning_res + 1))"
+            fi
         fi
     done
     if [ "$e" == "1" ]
@@ -90,8 +100,9 @@ function show_stats() {
     echo -e "$error_files"
     echo ""
     echo "1024 x 1024: $good_res"
-    echo "512 x 512: $warning_res"
-    echo "other: $error_res"
+    echo "512 x 512: $okay_res"
+    echo "warning: $warning_res"
+    echo "error: $error_res"
     if [ "$error_res" -gt "0" ]
     then
         exit 1
