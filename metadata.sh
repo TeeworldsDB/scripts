@@ -183,13 +183,14 @@ fi
 # find order change change
 # https://serverfault.com/questions/181787/find-command-default-sorting-order/181815#181815
 # thus sort to ensure same order on different machines
+# use -z to sort -print0
 find . -type f \( \
     -name "*.jpg" -o \
     -name "*.svg" -o \
     -name "*.xcf" -o \
     -name "*.rules" -o \
     -name "*.json" -o \
-    -name "*.png" \) -print0 | sort | while IFS= read -r -d '' f
+    -name "*.png" \) -print0 | sort -z | while IFS= read -r -d '' f
 do
     img=${f:2}
     if [[ ! -z "${file_images[$img]:-}" ]]
