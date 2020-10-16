@@ -81,6 +81,24 @@ check_files "* Kopie.*"
 check_files "*invalid encoding*"
 check_files "* *" "warning"
 
+dupe_case="$(find . | tr '[:upper:]' '[:lower:]' | sort | uniq -d | wc -l)"
+if [ "$dupe_case" -ne "0" ]
+then
+    err "found $dupe_case duplicated filenames when ignoring case:"
+    err_files="$((err_files + dupe_case))"
+    err="$((err + 1))"
+    if [ "$is_verbose" == "1" ]
+    then
+        find . | tr '[:upper:]' '[:lower:]' | sort | uniq -d
+    else
+        find . | tr '[:upper:]' '[:lower:]' | sort | uniq -d | head -n 3
+        if [ "$dupe_case" -gt "3" ]
+        then
+            echo "..."
+        fi
+    fi
+fi
+
 if [ "$wrn" != "0" ]
 then
     wrn "$wrn_files wrong files names ($wrn warnings)"
