@@ -145,7 +145,7 @@ function show_stats() {
 		echo "warning: $skins_warning_res"
 		echo "error: $skins_error_res"
 	fi
-	if [ "$error_res" -gt "0" ]
+	if [ "$error_res" -gt "0" ] || [ "$skins_error_res" -gt "0" ]
 	then
 		exit 1
 	fi
