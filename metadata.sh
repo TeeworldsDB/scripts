@@ -41,14 +41,42 @@ function delete_cache() {
     fi
 }
 
-if [ "$#" -ne "1" ]
+function usage() {
+    echo "usage: $(basename "$0") <directory> [OPTION]"
+    echo "options:"
+    echo " -Werror	handle warnings as errors"
+    echo "example: $(basename "$0") cartoon -Werror"
+}
+
+if [ "$#" -lt "1" ]
 then
-    echo "usage: $(basename "$0") <directory>"
-    echo "example: $(basename "$0") cartoon"
-    exit 0
+	usage
+	exit 0
 fi
 
 dir="$1"
+is_werror=0
+warnings=0
+
+for arg in "$@"
+do
+	if [ "${arg::1}" == "-" ]
+	then
+		if [ "$arg" == "--help" ] || [ "$arg" == "-h" ]
+		then
+			usage
+			exit 0
+		elif [ "$arg" == "-Werror" ]
+		then
+			is_werror=1
+		else
+			echo "Error: invalid option '$arg'"
+		fi
+	elif [ "$dir" == "" ]
+	then
+		dir="$arg"
+	fi
+done
 
 dbg "Parsing dir '$dir' ..."
 if [ ! -d "$dir" ]
@@ -109,6 +137,7 @@ function add_image() {
     then
         wrn "WARNING sha1 missmatch '$path'"
         wrn "'$old_sha1' -> '$new_sha1'"
+    	warnings="$((warnings + 1))"
     fi
     dbg "Adding image '$path' ..."
     dbg " author = '$author'"
@@ -167,6 +196,7 @@ do
         then
             wrn "WARNING delete image only exisiting in readme:"
             wrn "$file_path"
+	    warnings="$((warnings + 1))"
         else
             add_image "$file_path" "$author" "$notes" "$tags" "$sha1" "$line_num"
         fi
@@ -178,6 +208,12 @@ then
     echo "Error: invalid index $i != 0"
     delete_cache
     exit 1
+fi
+
+if [ "$warnings" -gt "0" ] && [ "$is_werror" == "1" ]
+then
+	echo "Error: finished with $warnings warnings and -Werror is active"
+	exit 1
 fi
 
 # find order change change
